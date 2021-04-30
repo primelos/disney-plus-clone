@@ -1,21 +1,46 @@
-import React from 'react'
-import styled from 'styled-components'
-import ImageSlider from '../image-slider'
-import Viewers from '../viewers'
-
+import React from "react";
+import styled from "styled-components";
+import ImageSlider from "../image-slider";
+import NewDisney from "../newdisney";
+import Originals from "../originals";
+import Recommended from "../recommended";
+import Trending from "../trending";
+import Viewers from "../viewers";
+import { db } from '../../firebase'
+import data from '../../disneyPlusMoviesData'
 
 
 const Home = () => {
+  // console.log('data', data);
+ const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const collectionRef = db.collection(collectionKey);
+
+  const batch = db.batch();
+  objectsToAdd.forEach((obj) => {
+    const newDocRef = collectionRef.doc();
+    batch.set(newDocRef, obj);
+  });
+  return await batch.commit();
+};
+
+addCollectionAndDocuments('movies', data)
+
   return (
     <Container>
-     <ImageSlider />
-     <Viewers />
+      <ImageSlider />
+      <Viewers />
+      <Recommended />
+      <NewDisney />
+      <Originals />
+      <Trending />
     </Container>
   );
-}
+};
 
-export default Home
-
+export default Home;
 
 const Container = styled.main`
   position: relative;
