@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setMovies } from "../../features/movie/movieSlice";
+import { selectUserName } from "../../features/user/userSlice";
 import styled from "styled-components";
 import ImageSlider from "../image-slider";
 import NewDisney from "../newdisney";
@@ -6,27 +9,58 @@ import Originals from "../originals";
 import Recommended from "../recommended";
 import Trending from "../trending";
 import Viewers from "../viewers";
-import { db } from '../../firebase'
-import data from '../../disneyPlusMoviesData'
-
+import { db } from "../../firebase";
+// import data from '../../disneyPlusMoviesData'
 
 const Home = () => {
-  // console.log('data', data);
- const addCollectionAndDocuments = async (
-  collectionKey,
-  objectsToAdd
-) => {
-  const collectionRef = db.collection(collectionKey);
+  const dispatch = useDispatch();
+  const userName = useSelector((state) => state.selectUserName);
+  let recommends = [];
+  let newDisneys = [];
+  let originals = [];
+  let trending = [];
+  useEffect(() => {
+    db.collection("movies").onSnapshot((snapshot) => {
+      snapshot.docs.map((doc) => {
+        console.log(recommends);
+        switch (doc.data().type) {
+          case "recommend":
+            recommends =[...recommends, { id: doc.id, ...doc.data() }]
+            break;
+          case "new":
+            newDisneys = [...newDisneys, { id: doc.id, ...doc.data() }];
+            break;
+          case "original":
+            originals = [...originals, { id: doc.id, ...doc.data() }];
+            break;
+          case "trending":
+            trending = [...trending, { id: doc.id, ...doc.data() }];
+            break;
+        }
+      });
+    });
+    dispatch(setMovies({
+      recommend: recommends,
+      newDisney: newDisneys,
+      original: originals,
+      trending: trending
+    }))
+  }, [userName]);
 
-  const batch = db.batch();
-  objectsToAdd.forEach((obj) => {
-    const newDocRef = collectionRef.doc();
-    batch.set(newDocRef, obj);
-  });
-  return await batch.commit();
-};
-
-addCollectionAndDocuments('movies', data)
+  // // Needed to add the files to firestore!
+  //  const addCollectionAndDocuments = async (
+  //   collectionKey,
+  //   objectsToAdd
+  // ) => {
+  //   const collectionRef = db.collection(collectionKey);
+  //   const batch = db.batch();
+  //   objectsToAdd.forEach((obj) => {
+  //     const newDocRef = collectionRef.doc();
+  //     batch.set(newDocRef, obj);
+  //   });
+  //   return await batch.commit();
+  // };
+  // addCollectionAndDocuments('movies', data)
 
   return (
     <Container>

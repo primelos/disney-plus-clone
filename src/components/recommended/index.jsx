@@ -1,19 +1,17 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-
+import { useSelector } from 'react-redux'
+import { selectRecommend } from "../../features/movie/movieSlice";
 
 const Recommended = () => {
+  const movies = useSelector(selectRecommend)
+  console.log('movies', movies);
   return (
     <Container>
       <h4>Recommended for You</h4>
       <Content>
-        <Wrap><Link to='/'>
-          <img src="https://prod-ripcut-delivery.disney-plus." alt=""/>
-           </Link></Wrap>
-        <Wrap>2</Wrap>
-        <Wrap>3</Wrap>
-        <Wrap>4</Wrap>
+       
       </Content>
     </Container>
   )
