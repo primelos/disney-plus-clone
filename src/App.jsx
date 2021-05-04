@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import './App.css';
+import Detail from './components/detail/detail';
 import Header from './components/header';
 import Home from './components/home';
 import Login from './components/login'
@@ -14,7 +15,8 @@ function App() {
         <Header />
         <Switch>
           <Route exact path="/" component={Login} />
-          <Route  path="/home" component={Home} />
+          <Route path="/home" component={Home} />
+          <Route path="/detail/:id" component={Detail} />
         </Switch>
       </Router>
     </div>
