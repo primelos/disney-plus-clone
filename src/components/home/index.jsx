@@ -10,19 +10,20 @@ import Recommended from "../recommended";
 import Trending from "../trending";
 import Viewers from "../viewers";
 import { db } from "../../firebase";
-// import data from '../../disneyPlusMoviesData'
+import data from '../../disneyPlusMoviesData'
 
 const Home = () => {
   const dispatch = useDispatch();
-  const userName = useSelector((state) => state.selectUserName);
+  const userName = useSelector(selectUserName);
   let recommends = [];
   let newDisneys = [];
   let originals = [];
   let trending = [];
+
   useEffect(() => {
     db.collection("movies").onSnapshot((snapshot) => {
       snapshot.docs.map((doc) => {
-        console.log(recommends);
+        // console.log(recommends);
         switch (doc.data().type) {
           case "recommend":
             recommends =[...recommends, { id: doc.id, ...doc.data() }]
@@ -38,29 +39,31 @@ const Home = () => {
             break;
         }
       });
+      dispatch(setMovies({
+        recommend: recommends,
+        newDisney: newDisneys,
+        original: originals,
+        trending: trending
+      }))
     });
-    dispatch(setMovies({
-      recommend: recommends,
-      newDisney: newDisneys,
-      original: originals,
-      trending: trending
-    }))
   }, [userName]);
 
-  // // Needed to add the files to firestore!
-  //  const addCollectionAndDocuments = async (
-  //   collectionKey,
-  //   objectsToAdd
-  // ) => {
-  //   const collectionRef = db.collection(collectionKey);
-  //   const batch = db.batch();
-  //   objectsToAdd.forEach((obj) => {
-  //     const newDocRef = collectionRef.doc();
-  //     batch.set(newDocRef, obj);
-  //   });
-  //   return await batch.commit();
-  // };
-  // addCollectionAndDocuments('movies', data)
+  //    //  Needed to add the files to firestore!
+  // useEffect(() => {
+  //    const addCollectionAndDocuments = async (
+  //     collectionKey,
+  //     objectsToAdd
+  //   ) => {
+  //     const collectionRef = db.collection(collectionKey);
+  //     const batch = db.batch();
+  //     objectsToAdd.forEach((obj) => {
+  //       const newDocRef = collectionRef.doc();
+  //       batch.set(newDocRef, obj);
+  //     });
+  //     return await batch.commit();
+  //   };
+  //   addCollectionAndDocuments('movies', data)
+  // }, [])
 
   return (
     <Container>
